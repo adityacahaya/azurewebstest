@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Creative - Start Bootstrap Theme</title>
+
+  <!-- Font Awesome Icons -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+  <!-- Plugin CSS -->
+  <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+
+  <!-- Theme CSS - Includes Bootstrap -->
+  <link href="css/creative.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="index.html">Kadek Azure Test Website</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto my-2 my-lg-0">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger">Portfolio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Register Section -->
+  <section class="page-section bg-secondary">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="text-white mt-0">Register Account</h2>
+          <hr class="divider light my-4">
+          <div class="login-page">
+            <div class="form">
+              <form class="register-form" id="fupForm" name="form1" method="post">
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="name" id="name"/>
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control" placeholder="password" id="password"/>
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="email address" id="email"/>
+                </div>
+                <input type="button" name="save" value="Save to database" id="butsave" class="btn btn-primary">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-light py-5">
+    <div class="container">
+      <div class="small text-center text-muted">Copyright &copy; 2019 - Start Bootstrap</div>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Insert to Database Success</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/creative.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <!-- BS JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#butsave').on('click', function() {
+        var name= $("#name").val();
+        var password= $("#password").val();
+        var email= $("#email").val();
+
+        $.ajax({
+          type: "POST",
+          url: "insertintodb.php",
+          data: {
+            name: name,
+            password: password,
+            email: email
+          },
+          success: function(data) {
+            var dataResult = JSON.parse(data);
+            if(dataResult.statusCode==200){
+              $("#myModal .modal-body").text('Success register');
+              $('#myModal').modal('show');
+            }
+            else if(dataResult.statusCode==201){
+              $("#myModal .modal-body").text('Fail register');
+              $('#myModal').modal('show');
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            errorFunction();
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>
