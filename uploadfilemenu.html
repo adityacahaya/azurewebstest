@@ -58,24 +58,17 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
-          <h2 class="text-white mt-0">Register Account</h2>
+          <h2 class="text-white mt-0">Upload You CV</h2>
           <hr class="divider light my-4">
-          <div class="login-page">
-            <div class="form">
-              <form class="register-form" id="fupForm" name="form1" method="post">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="name" id="name"/>
-                </div>
-                <div class="form-group">
-                  <input type="password" class="form-control" placeholder="password" id="password"/>
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="email address" id="email"/>
-                </div>
-                <input type="button" name="save" value="Submit" id="butsave" class="btn btn-primary">
-              </form>
-            </div>
+          <div class="form-group">
+            <form>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="customFile">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+              </div>
+            </form>
           </div>
+          <input type="button" name="save" value="Submit" id="butsave" class="btn btn-primary">
         </div>
       </div>
     </div>
@@ -117,11 +110,15 @@
   <script type="text/javascript" src="js/bootstrap.js"></script>
 
   <script type="text/javascript">
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
     $(document).ready(function() {
       $('#butsave').on('click', function() {
-        var name= $("#name").val();
-        var password= $("#password").val();
-        var email= $("#email").val();
+        var fileName = $(this).val();
 
         $.ajax({
           type: "POST",
