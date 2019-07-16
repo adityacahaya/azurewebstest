@@ -61,14 +61,15 @@
           <h2 class="text-white mt-0">Upload You CV</h2>
           <hr class="divider light my-4">
           <div class="form-group">
-            <form>
+            <form method="post" enctype="multipart/form-data">
               <div class="custom-file">
-                <input type="file" class="custom-file-input" id="customFile">
+                <input type="file" class="custom-file-input" id="customFile" name="files[]" multiple>
                 <label class="custom-file-label" for="customFile">Choose file</label>
               </div>
+              <br>
             </form>
           </div>
-          <input type="button" name="save" value="Submit" id="butsave" class="btn btn-primary">
+          <input type="submit" name="save" value="Submit" id="butsave" class="btn btn-primary">
         </div>
       </div>
     </div>
@@ -118,24 +119,32 @@
 
     $(document).ready(function() {
       $('#butsave').on('click', function() {
-        var fileName = $(this).val();
+        const url = 'uploadfile.php';
+        const form = document.querySelector('form');
+
+        const files = document.querySelector('[type=file]').files;
+        const formData = new FormData();
+
+        for (let i = 0; i < files.length; i++) {
+          let file = files[i];
+          formData.append('files[]', file);
+        };
 
         $.ajax({
+          url: url,
           type: "POST",
-          url: "insertintodb.php",
-          data: {
-            name: name,
-            password: password,
-            email: email
-          },
+          data: formData,
+          processData: false,
+          contentType: false,
           success: function(data) {
-            var dataResult = JSON.parse(data);
+            var resultfromphp = data.split("\n");;
+            var dataResult = JSON.parse(resultfromphp.slice(-1).pop());
             if(dataResult.statusCode==200){
-              $("#myModal .modal-body").text('Success register');
+              $("#myModal .modal-body").text('Success upload cv');
               $('#myModal').modal('show');
             }
             else if(dataResult.statusCode==201){
-              $("#myModal .modal-body").text('Fail register');
+              $("#myModal .modal-body").text('Fail upload cv');
               $('#myModal').modal('show');
             }
           },

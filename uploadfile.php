@@ -8,62 +8,61 @@ use MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions;
 use MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
 use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
 
-$fileToUpload = "HelloWorld.txt";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_FILES['files'])) {
+        $errors = [];
+        $path = 'send_to_storage/';
+        $extensions = ['jpg', 'jpeg', 'png', 'gif', 'txt', 'doc', 'docx'];
 
-try {
-    // set container
-    $containerName = "azurewebtest";
-    $connectionString = "DefaultEndpointsProtocol=https;AccountName=azurewebstest;AccountKey=YtrIKIOVXYNt2Yp2tJ1MNPeNz0CZgzM+SFST/D7Bv2yNw3DqEmty5jN1T9YwdO+sr+7s6h4tWXbByuhviQdjOQ==;EndpointSuffix=core.windows.net";
-    $blobClient = BlobRestProxy::createBlobService($connectionString);
+        $all_files = count($_FILES['files']['tmp_name']);
 
-  
-    # Upload file as a block blob
-    echo "Uploading BlockBlob: ".PHP_EOL;
-    echo $fileToUpload;
-    echo "<br />";
+        for ($i = 0; $i < $all_files; $i++) {
+            $file_name = $_FILES['files']['name'][$i];
+            $file_tmp = $_FILES['files']['tmp_name'][$i];
+            $file_type = $_FILES['files']['type'][$i];
+            $file_size = $_FILES['files']['size'][$i];
+            $file_ext = strtolower(end(explode('.', $file_name)));
 
-    $content = fopen($fileToUpload, "r");
+            $fileToUpload = $file_name;
+            $content = file_get_contents($_FILES['files']["tmp_name"][$i]);
 
-    //Upload blob
-    $blobClient->createBlockBlob($containerName, $fileToUpload, $content);
+            $file = $path . $file_name;
 
-    // List blobs.
-    $listBlobsOptions = new ListBlobsOptions();
-    $listBlobsOptions->setPrefix("HelloWorld");
+            if (!in_array($file_ext, $extensions)) {
+                $errors[] = 'Extension not allowed: ' . $file_name . ' ' . $file_type;
+            }else if ($file_size > 2097152) {
+                $errors[] = 'File size exceeds limit: ' . $file_name . ' ' . $file_type;
+            }else{
+              try {
+                  // set container
+                  $containerName = "azurewebtest";
+                  $connectionString = "DefaultEndpointsProtocol=https;AccountName=azurewebstest;AccountKey=YtrIKIOVXYNt2Yp2tJ1MNPeNz0CZgzM+SFST/D7Bv2yNw3DqEmty5jN1T9YwdO+sr+7s6h4tWXbByuhviQdjOQ==;EndpointSuffix=core.windows.net";
+                  $blobClient = BlobRestProxy::createBlobService($connectionString);
 
-    echo "These are the blobs present in the container: ";
+                  //Upload blob
+                  $blobClient->createBlockBlob($containerName, $fileToUpload, $content);
 
-    do{
-        $result = $blobClient->listBlobs($containerName, $listBlobsOptions);
-        foreach ($result->getBlobs() as $blob)
-        {
-            echo $blob->getName().": ".$blob->getUrl()."<br />";
+                  // List blobs.
+                  $listBlobsOptions = new ListBlobsOptions();
+              }
+              catch(ServiceException $e){
+                  $code = $e->getCode();
+                  $error_message = $e->getMessage();
+                  $errors[] = $code.": ".$error_message."<br />";
+              }
+              catch(InvalidArgumentTypeException $e){
+                  $code = $e->getCode();
+                  $error_message = $e->getMessage();
+                  $errors[] = $code.": ".$error_message."<br />";
+              }
+            }
         }
-
-        $listBlobsOptions->setContinuationToken($result->getContinuationToken());
-    } while($result->getContinuationToken());
-    echo "<br />";
-
-    // Get blob.
-    echo "This is the content of the blob uploaded: ";
-    $blob = $blobClient->getBlob($containerName, $fileToUpload);
-    fpassthru($blob->getContentStream());
-    echo "<br />";
+    }
 }
-catch(ServiceException $e){
-    // Handle exception based on error codes and messages.
-    // Error codes and messages are here:
-    // http://msdn.microsoft.com/library/azure/dd179439.aspx
-    $code = $e->getCode();
-    $error_message = $e->getMessage();
-    echo $code.": ".$error_message."<br />";
-}
-catch(InvalidArgumentTypeException $e){
-    // Handle exception based on error codes and messages.
-    // Error codes and messages are here:
-    // http://msdn.microsoft.com/library/azure/dd179439.aspx
-    $code = $e->getCode();
-    $error_message = $e->getMessage();
-    echo $code.": ".$error_message."<br />";
+
+if ($errors){
+  echo json_encode(array("statusCode"=>201));
+} else{
+  echo json_encode(array("statusCode"=>200));
 }
 ?>
