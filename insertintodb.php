@@ -1,8 +1,14 @@
 <?php
-//------insert.php------
-$servername = "azurewebstest3.mysql.database.azure.com";
-$username = "adityacahaya@azurewebstest3";
-$password = "040194aditya!";
+// //------insert.php------ PRODUCTION
+// $servername = "azurewebstest3.mysql.database.azure.com";
+// $username = "adityacahaya@azurewebstest3";
+// $password = "040194aditya!";
+// $dbname = "azurewebstest";
+
+//------insert.php------ DEVELOPMENT
+$servername = "localhost";
+$username = "root";
+$password = "";
 $dbname = "azurewebstest";
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);

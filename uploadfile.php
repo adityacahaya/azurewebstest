@@ -9,7 +9,29 @@ use MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
 use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_FILES['files'])) {
+    // //------insert.php------ PRODUCTION
+    // $servername = "azurewebstest3.mysql.database.azure.com";
+    // $username = "adityacahaya@azurewebstest3";
+    // $password = "040194aditya!";
+    // $dbname = "azurewebstest";
+
+    //------insert.php------ DEVELOPMENT
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "azurewebstest";
+
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    $email=$_POST['email'];
+
+    $sql="select * from account where email = '".$email."'";
+    $result = $conn->query($sql);
+    $canuploadfile = false;
+    if ($result->num_rows > 0) {
+      $canuploadfile = true;
+    }
+
+    if (isset($_FILES['files']) && $canuploadfile) {
         $errors = [];
         $path = 'send_to_storage/';
         $extensions = ['jpg', 'jpeg', 'png', 'gif', 'txt', 'doc', 'docx'];
@@ -42,27 +64,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   //Upload blob
                   $blobClient->createBlockBlob($containerName, $fileToUpload, $content);
 
-                  // List blobs.
-                  $listBlobsOptions = new ListBlobsOptions();
+                  $blob = $blobClient->getBlob($containerName, $fileToUpload);
+                  fpassthru($blob->getUrl());
+
+                  $sql="insert into fileupload(email,linkfile) values ('".$email."','".$pass."','".$email."')";
+
+                  if (mysqli_query($conn,$sql)) {
+                  	echo json_encode(array("statusCode"=>200));
+                  }else {
+                  	echo json_encode(array("statusCode"=>201));
+                  }
               }
               catch(ServiceException $e){
                   $code = $e->getCode();
                   $error_message = $e->getMessage();
-                  $errors[] = $code.": ".$error_message."<br />";
+                  $errors[] = $code.": ".$error_message."";
               }
               catch(InvalidArgumentTypeException $e){
                   $code = $e->getCode();
                   $error_message = $e->getMessage();
-                  $errors[] = $code.": ".$error_message."<br />";
+                  $errors[] = $code.": ".$error_message."";
               }
             }
         }
+    }else{
+      $errors[] = "user not not register yet";
     }
 }
 
 if ($errors){
-  echo json_encode(array("statusCode"=>201));
+  echo json_encode(array("statusCode"=>201,"errormessage"=>$errors));
 } else{
-  echo json_encode(array("statusCode"=>200));
+  echo json_encode(array("statusCode"=>200,"errormessage"=>$errors));
 }
 ?>
