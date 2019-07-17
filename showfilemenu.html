@@ -29,10 +29,10 @@
 
   <script src="vendor/jquery/jquery.min.js"></script>
   <script>
-    $(function(){
-      $("#includedContent").load("menubar.html");
-    });
-    </script>
+  $(function(){
+    $("#includedContent").load("menubar.html");
+  });
+  </script>
 
   <div id="includedContent"></div>
 
@@ -41,21 +41,15 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
-          <h2 class="text-white mt-0">Upload You CV</h2>
+          <h2 class="text-white mt-0">Download Your CV</h2>
           <hr class="divider light my-4">
           <div class="form-group">
             <input type="text" class="form-control" placeholder="email address" id="email"/>
           </div>
-          <div class="form-group">
-            <form method="post" enctype="multipart/form-data">
-              <div class="custom-file">
-                <input type="file" class="custom-file-input" id="customFile" name="files[]" multiple>
-                <label class="custom-file-label" for="customFile">Choose file</label>
-              </div>
-              <br>
-            </form>
-          </div>
           <input type="submit" name="save" value="Submit" id="butsave" class="btn btn-primary">
+          <br/> <br/>
+          <div class="form-group table-responsive-lg" id="showTableHere">
+          </div>
         </div>
       </div>
     </div>
@@ -86,7 +80,6 @@
   </div>
 
   <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Plugin JavaScript -->
@@ -100,25 +93,12 @@
   <script type="text/javascript" src="js/bootstrap.js"></script>
 
   <script type="text/javascript">
-  // Add the following code if you want the name of the file appear on selec
-  $(".custom-file-input").on("change", function() {
-    var fileName = $(this).val().split("\\").pop();
-    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-  });
 
   $(document).ready(function() {
     $('#butsave').on('click', function() {
       var email= $("#email").val();
-      const url = 'uploadfile.php';
-      const form = document.querySelector('form');
-
-      const files = document.querySelector('[type=file]').files;
+      const url = 'showdata.php';
       const formData = new FormData();
-
-      for (let i = 0; i < files.length; i++) {
-        let file = files[i];
-        formData.append('files[]', file);
-      };
       formData.append('email',email);
 
       $.ajax({
@@ -130,15 +110,22 @@
         success: function(data) {
           var resultfromphp = data.split("\n");;
           var dataResult = JSON.parse(resultfromphp.slice(-1).pop());
-          if(dataResult.statusCode==200){
-            $("#myModal .modal-header").text('Success upload cv');
+          if(dataResult.statusCode==201){
+            $("#myModal .modal-header").text('Fail to get data');
             $("#myModal .modal-body").text(dataResult.errormessage);
             $('#myModal').modal('show');
-          }
-          else if(dataResult.statusCode==201){
-            $("#myModal .modal-header").text('Fail upload cv');
-            $("#myModal .modal-body").text(dataResult.errormessage);
-            $('#myModal').modal('show');
+          }else{
+            var element = document.getElementById('tabledata');
+            if(element){element.parentNode.removeChild(element)};
+            var dataResult = JSON.parse(data);
+            $('#showTableHere').append("<table class='thead-light table-bordered table-dark table-hover' id='tabledata'><tr><th>email</th><th>link</th></tr></table>");
+            var tr;
+            for (var i = 0; i < dataResult.length; i++) {
+                tr = $('<tr/>');
+                tr.append("<td>" + dataResult[i].email + "</td>");
+                tr.append("<td><a href='"+ dataResult[i].linkfile +"'>" + dataResult[i].linkfile + "</a></td>");
+                $('#tabledata').append(tr);
+            }
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
