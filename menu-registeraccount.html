@@ -8,32 +8,19 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Creative - Start Bootstrap Theme</title>
+  <title>Kadek Azure Test Website</title>
 
-  <!-- Font Awesome Icons -->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
   <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
-
-  <!-- Plugin CSS -->
   <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
-
-  <!-- Theme CSS - Includes Bootstrap -->
   <link href="css/creative.min.css" rel="stylesheet">
 
 </head>
 
 <body id="page-top">
 
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script>
-    $(function(){
-      $("#includedContent").load("menubar.html");
-    });
-    </script>
-  <div id="includedContent"></div>
+  <div id="template-menubar"></div>
 
   <!-- Register Section -->
   <section class="page-section bg-secondary">
@@ -63,39 +50,14 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="bg-light py-5">
-    <div class="container">
-      <div class="small text-center text-muted">Copyright &copy; 2019 - Start Bootstrap</div>
-    </div>
-  </footer>
+  <div id="template-footer"></div>
+  <div id="template-modal"></div>
 
-  <!-- Modal -->
-  <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <p>Insert to Database Success</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Plugin JavaScript -->
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-  <!-- Custom scripts for this template -->
   <script src="js/creative.min.js"></script>
-
-  <!-- BS JavaScript -->
   <script type="text/javascript" src="js/bootstrap.js"></script>
 
   <script type="text/javascript">
@@ -130,6 +92,13 @@
         });
       });
     });
+  </script>
+
+  <!-- script js for add template to page -->
+  <script>
+    $("#template-menubar").load("template-menubar.html");
+    $("#template-footer").load("template-footer.html");
+    $("#template-modal").load("template-modal.html");
   </script>
 
 </body>
