@@ -9,16 +9,16 @@ use MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
 use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
 
 // //------insert.php------ PRODUCTION
-// $servername = "azurewebstest3.mysql.database.azure.com";
-// $username = "adityacahaya@azurewebstest3";
-// $password = "040194aditya!";
-// $dbname = "azurewebstest";
+$servername = "azurewebstest3.mysql.database.azure.com";
+$username = "adityacahaya@azurewebstest3";
+$password = "040194aditya!";
+$dbname = "azurewebstest";
 
 //------insert.php------ DEVELOPMENT
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "azurewebstest";
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "azurewebstest";
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 $email=$_POST['email'];
@@ -45,8 +45,9 @@ if (mysqli_query($conn,$sql)) {
       foreach ($result->getBlobs() as $blob)
       {
         $bloburl = $blob->getUrl();
+        $blobname = $blob->getName();
         if($linkfile == $bloburl){
-          $blobClient->deleteBlob($containerName, $blob);
+          $blobClient->deleteBlob($containerName, $blobname);
         }
       }
       $listBlobsOptions->setContinuationToken($result->getContinuationToken());
